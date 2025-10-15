@@ -1,0 +1,30 @@
+import csv
+from statistics import mean
+
+def analyze_trend(csv_file):
+    """Simple AI-like trend analysis: detects uptrend, downtrend, or stability."""
+    try:
+        prices = []
+        with open(csv_file, newline='') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                prices.append(float(row["Price (USD)"]))
+        
+        if len(prices) < 2:
+            print("Not enough data for analysis.")
+            return
+
+        avg_recent = mean(prices[-5:]) if len(prices) >= 5 else mean(prices)
+        avg_old = mean(prices[:-5]) if len(prices) > 5 else avg_recent
+
+        print("\n=== AI Trend Analysis ===")
+        if avg_recent > avg_old:
+            print("?? Uptrend detected — prices are increasing!")
+        elif avg_recent < avg_old:
+            print("?? Downtrend detected — prices are decreasing!")
+        else:
+            print("? Stable trend detected — no significant change.")
+        print("==========================")
+
+    except Exception as e:
+        print(f"? Analysis error: {e}")
